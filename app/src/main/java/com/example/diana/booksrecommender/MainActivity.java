@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private LinearLayout Prof_Section;
     private Button SignOut;
+    private Button Books;
     private SignInButton SignIn;
     private TextView Name,Email;
     private ImageView Prof_Pic;
@@ -39,6 +40,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Prof_Section = (LinearLayout)findViewById(R.id.prof_section);
         SignOut = (Button)findViewById(R.id.bn_logout);
         SignIn = (SignInButton) findViewById(R.id.bn_login);
+        Books = (Button) findViewById(R.id.bn_books);
+        Books.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, BooksActivity.class));
+            }
+        });
         Name = (TextView) findViewById(R.id.name);
         Email = (TextView) findViewById(R.id.email);
         Prof_Pic = (ImageView) findViewById(R.id.prof_pic);
