@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +24,7 @@ public class BooksActivity extends AppCompatActivity {
     private static final String GOOGLE_BOOKS_REQUEST_URL =
             "https://www.googleapis.com/books/v1/volumes?q=intitle:";
     //put yout key here
-    private static final String GOOGLE_BOOKS_APP_KEY = "&key=";
+    private static final String GOOGLE_BOOKS_APP_KEY = "&key=AIzaSyANSxW0TSBfHpNpMeVM5Gt-ClM8cUzns5M";
     private String searchText;
 
     private static final int BOOK_LOADER_ID = 1;
@@ -33,6 +36,7 @@ public class BooksActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_books);
 

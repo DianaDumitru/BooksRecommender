@@ -1,8 +1,10 @@
 package com.example.diana.booksrecommender;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -33,10 +35,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView Prof_Pic;
     private GoogleApiClient googleApiClient;
     private static final int REQ_CODE = 9001;
+    public static String email;
+    private Button show;
+    DatabaseHelper myDb;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        myDb = new DatabaseHelper(this);
         Prof_Section = (LinearLayout)findViewById(R.id.prof_section);
         SignOut = (Button)findViewById(R.id.bn_logout);
         SignIn = (SignInButton) findViewById(R.id.bn_login);
@@ -55,7 +61,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Prof_Section.setVisibility(View.GONE);
         GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,signInOptions).build();
+        show = (Button) findViewById(R.id.show);
+        show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Cursor cursor = myDb.getAllData(email);
+                if (cursor.getCount() == 0)
+                {
+                    ShowMessage("Error","No data found 😞");
+                    return;
+                }
+                StringBuffer buffer = new StringBuffer();
+                while(cursor.moveToNext())
+                {
+                    buffer.append("Id: "+ cursor.getString(0)+"\n");
+                    buffer.append("Email: "+ cursor.getString(1)+"\n");
+                    buffer.append("Tile: "+ cursor.getString(3)+"\n");
+                }
+
+                ShowMessage("Data: ",buffer.toString());
+            }
+        });
     }
+
+    public void ShowMessage (String title, String message)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.show();
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -97,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             GoogleSignInAccount account = result.getSignInAccount();
             String name = account.getDisplayName();
             String email = account.getEmail();
+            this.email = email;
             String img_url = account.getPhotoUrl().toString();
             Name.setText(name);
             Email.setText(email);

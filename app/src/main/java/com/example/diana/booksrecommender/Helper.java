@@ -143,13 +143,37 @@ public class Helper {
 
                 String url = volumeInfo.getString("infoLink");
 
+                String selfLink = currentBook.getString("volumeInfo");
+                Double averageRating = 3.2;
+                int pageCount = 100;
+                String[] categories = null;
+                String description = "";
+                try {
 
+                    if (volumeInfo.has("averageRating"))
+                        averageRating = volumeInfo.getDouble("averageRating");
+                    if (volumeInfo.has("pageCount"))
+                        pageCount = volumeInfo.getInt("pageCount");
+                    if (volumeInfo.has("description"))
+                        description = volumeInfo.getString("description");
+                    if (volumeInfo.has("categories")) {
+                        JSONArray cat = volumeInfo.getJSONArray("categories");
+                        categories = new String[cat.length()];
+                        for (int j = 0; j < cat.length(); j++) {
+                            categories[j] = cat.getString(j);
+                        }
+                    }
+                }catch (Exception e)
+                {
+
+                }
 
                 JSONObject images = volumeInfo.getJSONObject("imageLinks");
                 String imgUrl = images.getString("smallThumbnail");
                 String id = currentBook.getString("id");
-
-                Book book = new Book(title, author,imgUrl,id);
+/*public Book(String title, String authors, String imgUrl, Double averageRating, int pageCount, String description, String[] categories, String selfLink, String id) {
+    */
+                Book book = new Book(title, author,imgUrl,averageRating,pageCount,description,categories,selfLink,id);
 
                 books.add(book);
             }

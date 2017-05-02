@@ -3,137 +3,169 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/linearLayout">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/nocover"
-            android:layout_gravity="center"
-            android:id="@+id/book_cover"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:id="@+id/title"
-            android:textStyle="bold"
-            android:textAllCaps="true"
-            android:textSize="20dp"
-            android:textColor="#111111"
-            android:layout_margin="5dp"
-            android:text="title"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:id="@+id/author"
-            android:textStyle="italic"
-            android:textAllCaps="true"
-            android:textSize="15dp"
-            android:textColor="#111111"
-            android:layout_margin="5dp"
-            android:text="by"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linearLayout"
-        android:layout_margin="10dp"
-        android:id="@+id/linearLayout2">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/star"
-                android:layout_gravity="center"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="#111"
-                android:id="@+id/rate"
-                android:text="Avg:"
-                />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/pages"
-                android:layout_gravity="center"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="#111"
-                android:id="@+id/pages"
-                android:text="pages"
-                />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.3"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/tag"
-                android:layout_gravity="center"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:id="@+id/tags"
-                android:textColor="#111"
-                android:text="Category:"
-                />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/linearLayout2"
-        android:layout_alignParentBottom="true">
-
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="10dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:weightSum="10"
+                    android:orientation="horizontal"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.33" >
+                    </LinearLayout>
 
-            <TextView
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.33"
+                        android:orientation="vertical" >
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="214dp"
+                            android:src="@drawable/nocover"
+                            android:layout_gravity="center"
+                            android:id="@+id/book_cover"
+                            />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.33"></LinearLayout>
+
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/title"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:textColor="#111111"
+                    android:layout_margin="5dp"
+                    android:text="title"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/author"
+                    android:textStyle="italic"
+                    android:textAllCaps="true"
+                    android:textSize="15dp"
+                    android:textColor="#111111"
+                    android:layout_margin="5dp"
+                    android:text="by"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal"
+                android:layout_below="@+id/linearLayout"
+                android:layout_margin="10dp"
+                android:id="@+id/linearLayout2">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/star"
+                        android:layout_gravity="center"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="#111"
+                        android:id="@+id/rate"
+                        android:text="Avg:"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/pages"
+                        android:layout_gravity="center"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="#111"
+                        android:id="@+id/pages"
+                        android:text="pages"
+                        />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/tag"
+                        android:layout_gravity="center"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:id="@+id/tags"
+                        android:textColor="#111"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/description"
+                    android:textColor="#111"
+                    android:text="Description"/>
+            </LinearLayout>
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:id="@+id/description"
-                android:textColor="#111"
-                android:text="Description"/>
+                android:text="FAVORITE"
+                android:id="@+id/fav"></Button>
         </LinearLayout>
+
+
     </ScrollView>
-
-
 </RelativeLayout>
