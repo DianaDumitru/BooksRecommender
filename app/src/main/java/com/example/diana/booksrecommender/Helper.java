@@ -147,9 +147,9 @@ public class Helper {
 
                 JSONObject images = volumeInfo.getJSONObject("imageLinks");
                 String imgUrl = images.getString("smallThumbnail");
+                String id = currentBook.getString("id");
 
-
-                Book book = new Book(title, author,imgUrl);
+                Book book = new Book(title, author,imgUrl,id);
 
                 books.add(book);
             }

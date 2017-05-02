@@ -1,13 +1,27 @@
 package com.example.diana.booksrecommender;
 
+import java.io.Serializable;
+
 /**
  * Created by Diana on 4/30/2017.
  */
 
-public class Book {
+public class Book implements Serializable{
 
     private String title;
     private String authors;
+    private String imgUrl;
+    private static final long serialVersionUID = 1L;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    private String id;
 
     public String getImgUrl() {
         return imgUrl;
@@ -17,12 +31,13 @@ public class Book {
         this.imgUrl = imgUrl;
     }
 
-    private String imgUrl;
 
-    public Book(String title, String authors,String imgUrl) {
+
+    public Book(String title, String authors,String imgUrl,String id) {
         this.title = title;
         this.authors = authors;
         this.imgUrl = imgUrl;
+        this.id = id;
     }
 
     public String getTitle() {
@@ -41,5 +56,15 @@ public class Book {
 
     public void setAuthors(String authors) {
         this.authors = authors;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "title='" + title + '\'' +
+                ", authors='" + authors + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", id='" + id + '\'' +
+                '}';
     }
 }

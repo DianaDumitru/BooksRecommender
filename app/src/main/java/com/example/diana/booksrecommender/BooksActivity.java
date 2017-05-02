@@ -1,5 +1,6 @@
 package com.example.diana.booksrecommender;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,8 +46,9 @@ public class BooksActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView < ? > adapterView, View view, int position, long l) {
                 Book currentBook = adapter.getItem(position);
-
-
+                Intent intent = new Intent(BooksActivity.this,BookDetailsActivity.class);
+                intent.putExtra("Book",currentBook);
+                startActivity(intent);
             }
         });
 
@@ -83,7 +85,6 @@ public class BooksActivity extends AppCompatActivity {
             if (Url == null) {
                 return null;
             }
-
             return Helper.fetchBookData(Url);
         }
 
