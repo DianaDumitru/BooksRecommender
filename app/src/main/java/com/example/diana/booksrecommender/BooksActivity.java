@@ -24,7 +24,7 @@ public class BooksActivity extends AppCompatActivity {
     private static final String GOOGLE_BOOKS_REQUEST_URL =
             "https://www.googleapis.com/books/v1/volumes?q=intitle:";
     //put yout key here
-    private static final String GOOGLE_BOOKS_APP_KEY = "&key=AIzaSyANSxW0TSBfHpNpMeVM5Gt-ClM8cUzns5M";
+    private static final String GOOGLE_BOOKS_APP_KEY = "&key=";
     private String searchText;
 
     private static final int BOOK_LOADER_ID = 1;
