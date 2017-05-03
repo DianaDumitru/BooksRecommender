@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">BooksRecommender</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="want_more">Want more?</string>
+    <string name="favorites">Favorites</string>
+
+    <string name="signout">sign out</string>
+    <string name="search">Search</string>
+    <string name="addToFavorites">Add to FAVORITES</string>
+    <string name="go">GO</string>
+    <string name="searchHint">Search...</string>
+    <string name="seachBooks">Search books</string>
+    <string name="noBooksText">Looks like you do not have any favorite books. Go find some here</string>
 </resources>

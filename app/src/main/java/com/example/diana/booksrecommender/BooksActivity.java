@@ -11,13 +11,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BooksActivity extends AppCompatActivity {
+public class BooksActivity extends MainActivity {
 
     private static final String LOG_TAG = BooksActivity.class.getName();
 
@@ -26,8 +27,6 @@ public class BooksActivity extends AppCompatActivity {
     //put yout key here
     private static final String GOOGLE_BOOKS_APP_KEY = "&key=";
     private String searchText;
-
-    private static final int BOOK_LOADER_ID = 1;
 
     private BookAdapter adapter;
 
@@ -42,8 +41,8 @@ public class BooksActivity extends AppCompatActivity {
 
         bookListView = (ListView) findViewById(R.id.listview_book);
         emptyStateTextView = (TextView) findViewById(R.id.empty_view_book);
-        bookListView.setEmptyView(emptyStateTextView);
 
+        bookListView.setEmptyView(emptyStateTextView);
         adapter = new BookAdapter(this, new ArrayList < Book > ());
         bookListView.setAdapter(adapter);
         bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -57,9 +56,9 @@ public class BooksActivity extends AppCompatActivity {
         });
 
 
-        Button button = (Button) findViewById(R.id.start_search_button);
+        Button searchButton = (Button) findViewById(R.id.start_search_button);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        searchButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 EditText searchEditText = (EditText) findViewById(R.id.search_text);
@@ -89,12 +88,17 @@ public class BooksActivity extends AppCompatActivity {
             if (Url == null) {
                 return null;
             }
+
             return Helper.fetchBookData(Url);
         }
 
         @Override
         protected void onPostExecute(List<Book> books) {
-            adapter.addAll(books);
+            if (books != null)
+                adapter.addAll(books);
+            else{
+                Toast.makeText(BooksActivity.this, "No data found", Toast.LENGTH_LONG).show();
+            }
         }
     }
 

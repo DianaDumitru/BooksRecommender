@@ -9,18 +9,32 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "Books.db";
-    public static final String TABLE_NAME = "FAVORITE_BOOK";
-    public static final String COL_1 = "ID";
-    public static final String COL_2 = "EMAIL";//users email
-    public static final String COL_3 = "BOOK_ID";//id provided by google
-    public static final String COL_4 = "TITLE";
-    public static final String COL_5 = "AUTHOR";
-    public static final String COL_6 = "CATEGORY";
+    public static final String USER_TABLE_NAME = "USER";
+    public static final String BOOK_TABLE_NAME = "BOOK";
+    public static final String FAVORITES_TABLE_NAME = "FAVORITES";
+
+    public static final String ID = "ID";
+    public static final String EMAIL = "EMAIL";
+
+    public static final String BOOK_ID_API = "BOOK_ID_API";
+    public static final String TITLE = "TITLE";
+    public static final String AUTHOR = "AUTHOR";
+    public static final String CATEGORY = "CATEGORY";
+    public static final String IMG_URL = "IMG_URL";
+
+    public static final String BOOK_ID_FK = "BOOK_ID";
+    public static final String USER_ID_FK = "USER_ID";
+
+
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -29,62 +43,151 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + "(" + COL_1 + " INTEGER PRIMARY KEY AUTOINCREMENT," + COL_2 + " TEXT," + COL_3 + " TEXT," + COL_4 + " TEXT,"+ COL_5 + " TEXT," + COL_6 + " TEXT)" );
+        db.execSQL("CREATE TABLE " + USER_TABLE_NAME + " ( " + ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + EMAIL + " TEXT )" );
+        db.execSQL("CREATE TABLE " + BOOK_TABLE_NAME + " ( " + ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + BOOK_ID_API + " TEXT," +
+                TITLE + " TEXT," + AUTHOR + " TEXT," + CATEGORY+ " TEXT,"+ IMG_URL + " TEXT )");
+        db.execSQL("CREATE TABLE " + FAVORITES_TABLE_NAME + " ( " + ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + BOOK_ID_FK + " INTEGER," +
+                USER_ID_FK + " INTEGER," + " FOREIGN KEY( " + BOOK_ID_FK + ") REFERENCES " + BOOK_TABLE_NAME+"(" + ID + " ) ON DELETE CASCADE," +
+                " FOREIGN KEY( " + USER_ID_FK + ") REFERENCES " + USER_TABLE_NAME+"(" + ID + " ) ON DELETE CASCADE)"
+        );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME );
+
+        db.execSQL("DROP TABLE IF EXISTS " + USER_TABLE_NAME );
+        db.execSQL("DROP TABLE IF EXISTS " + BOOK_TABLE_NAME );
+        db.execSQL("DROP TABLE IF EXISTS " + FAVORITES_TABLE_NAME);
         onCreate(db);
     }
 
-    public boolean insertData(String email,String bookID,String title,String author,String category)
-    {
+    //returns the users id
+    public int insertUser(String email){
+        int id = userExists(email);
+        if (id != -1)
+            return id;
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2,email);
-        contentValues.put(COL_3,bookID);
-        contentValues.put(COL_4,title);
-        contentValues.put(COL_5,author);
-        contentValues.put(COL_6,category);
-        long result = db.insert(TABLE_NAME,null,contentValues);
+        contentValues.put(EMAIL,email);
+
+        long result = db.insert(USER_TABLE_NAME,null,contentValues);
         if (result == -1)
-            return false;
-        else
-            return true;
+            return -1;
+        return (int)result;
     }
 
-    public boolean bookExists(String email, String bookId)
+    public List<Book> getBooks(int userId)
     {
         Cursor cursor = null;
         SQLiteDatabase db = this.getReadableDatabase();
-        String checkQuery = "SELECT " + COL_1 + " FROM " + TABLE_NAME + " WHERE " + COL_2 + "= '"+email + "' and " + COL_3 + " = '" + bookId + "'";
-        cursor= db.rawQuery(checkQuery,null);
-        boolean exists = (cursor.getCount() > 0);
-        cursor.close();
-        db.close();
-        return exists;
-    }
+        int id = -1;
+        ArrayList<Book> result = null;
+        String checkQuery = "SELECT " + BOOK_ID_API + ", " + TITLE + ", " + AUTHOR + ", " + CATEGORY +", " + IMG_URL + " FROM "
+                + FAVORITES_TABLE_NAME + " fav JOIN "+ BOOK_TABLE_NAME + " books ON " + " fav." + BOOK_ID_FK + " = books."+ID+
+               " WHERE fav." + USER_ID_FK + "= "+userId;
+        try{
+            cursor= db.rawQuery(checkQuery,null);
+            Book aux;
+            result = new ArrayList<Book>();
+               while (cursor.moveToNext())
+            {
+                String[] categories = new String[1];
+                categories[0] = cursor.getString(3);
+                aux = new Book(cursor.getString(1),cursor.getString(2),cursor.getString(4),3.2,100,null,categories,null,cursor.getString(0));
+                result.add(aux);
+            }
 
-    public Cursor getAllData(String email)
-    {
-        Cursor res = null;
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            res = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE " + COL_2 + "='" + email+ "'", null);
-
+            cursor.close();
+            db.close();
         }catch (Exception e)
         {
-            String s = e.getMessage();
+            String ex = e.getMessage();
         }
-        return res;
+        if(result.size() == 0)
+            return null;
+        return result;
+    }
+
+    public int userExists(String email){
+        Cursor cursor = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        int id = -1;
+        String checkQuery = "SELECT " + ID + " FROM " + USER_TABLE_NAME + " WHERE " + EMAIL + "= '"+email + "'";
+        try{
+            cursor= db.rawQuery(checkQuery,null);
+
+            if (cursor.getCount() == 1 && cursor.moveToFirst())
+                id = cursor.getInt(0);
+
+            cursor.close();
+            db.close();
+        }catch (Exception e)
+        {
+            String ex = e.getMessage();
+        }
+        return id;
+    }
+
+    public int insertBook(String bookID,String title,String author,String category,String img_url)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues;
+        contentValues = new ContentValues();
+        contentValues.put(BOOK_ID_API,bookID);
+        contentValues.put(TITLE,title);
+        contentValues.put(AUTHOR,author);
+        contentValues.put(CATEGORY,category);
+        contentValues.put(IMG_URL,img_url);
+        long result = db.insert(BOOK_TABLE_NAME,null,contentValues);
+        if (result == -1)
+            return -1;
+        return (int)result;
+    }
+
+    public boolean insertFavorite(int userId,int bookIdFk){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues;
+        contentValues = new ContentValues();
+        contentValues.put(BOOK_ID_FK,bookIdFk);
+        contentValues.put(USER_ID_FK,userId);
+        long result = db.insert(FAVORITES_TABLE_NAME,null,contentValues);
+        if (result == -1)
+            return false;
+        return true;
+    }
+
+    public int bookExists(String bookId){
+        Cursor cursor = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String checkQuery = "SELECT " + ID + " FROM " + BOOK_TABLE_NAME + " WHERE " + BOOK_ID_API + "='"+bookId+"'";
+        cursor= db.rawQuery(checkQuery,null);
+        int id;
+        if (cursor.getCount() == 1 && cursor.moveToFirst())
+            id = cursor.getInt(0);
+        else
+            id = -1;
+        cursor.close();
+        db.close();
+        return id;
     }
 
 
-    public int deleteFavorite(String bookId,String email)
+    public boolean favoriteExists(int userId, int bookId)
+    {
+        Cursor cursor = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String checkQuery = "SELECT " + ID + " FROM " + FAVORITES_TABLE_NAME + " WHERE " + BOOK_ID_FK + "="+bookId + " and " + USER_ID_FK + " = " + userId;
+        cursor= db.rawQuery(checkQuery,null);
+
+        if (cursor.getCount() > 0)
+            return true;
+        return false;
+    }
+
+    public int deleteFavorite(int bookId,int userId)
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        int res =  db.delete(TABLE_NAME, COL_3 + " = '" + bookId +"' and "+ COL_2 + " = '" + email + "'",null);
+        int res =  db.delete(FAVORITES_TABLE_NAME, BOOK_ID_FK + " = " + bookId +" and "+ USER_ID_FK + " = " + userId,null);
         db.close();
         return  res;
     }

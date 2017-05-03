@@ -1,7 +1,8 @@
 package com.example.diana.booksrecommender;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -10,18 +11,25 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-public class BookDetailsActivity extends AppCompatActivity {
+public class BookDetailsActivity extends MainActivity {
 
 
-    ImageView imageView;
-    TextView author;
-    TextView title;
-    TextView rate;
-    TextView pages;
-    TextView tags;
-    TextView description;
-    Button fav;
-    DatabaseHelper myDb;
+    private static final String LOG_TAG = BookDetailsActivity.class.getName();
+
+    private ImageView bookImageView;
+    private TextView authorTextView;
+    private TextView titleTextView;
+    private TextView rateTextView;
+    private TextView pagesTextView;
+    private TextView tagsTextView;
+    private TextView descriptionTextView;
+    private Button favoriteBooksButton;
+    private DatabaseHelper myDb;
+
+    //the current book id from db is stored here, in case the book does not exist in db this will be -1
+    private int bookId;
+    //true if the current user has the book in favorites table already
+    private boolean existsInFavorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,50 +38,62 @@ public class BookDetailsActivity extends AppCompatActivity {
 
         final Book currentBook = (Book) getIntent().getSerializableExtra("Book");
         myDb = new DatabaseHelper(this);
-        imageView = (ImageView)findViewById(R.id.book_cover);
-        author = (TextView)findViewById(R.id.author);
-        title =  (TextView)findViewById(R.id.title);
-        rate =  (TextView)findViewById(R.id.rate);
-        pages = (TextView)findViewById(R.id.pages);
-        tags = (TextView)findViewById(R.id.tags);
+        bookImageView = (ImageView)findViewById(R.id.book_cover);
+        authorTextView = (TextView)findViewById(R.id.author);
+        titleTextView =  (TextView)findViewById(R.id.title);
+        rateTextView =  (TextView)findViewById(R.id.rate);
+        pagesTextView = (TextView)findViewById(R.id.pages);
+        tagsTextView = (TextView)findViewById(R.id.tags);
+        descriptionTextView = (TextView)findViewById(R.id.description);
+        favoriteBooksButton = (Button)findViewById(R.id.fav);
 
-        Glide.with(this).load(currentBook.getImgUrl()).into(imageView);
-        author.setText("by " + currentBook.getAuthors());
-        title.setText(currentBook.getTitle());
-        rate.setText("Avg. " + currentBook.getAverageRating());
-        pages.setText(currentBook.getPageCount() + " pages");
-        if (currentBook.getCategories() == null)
-        {
-            tags.setText("No Category");
-        }else
-        {
+        Glide.with(this).load(currentBook.getImgUrl()).into(bookImageView);
+        authorTextView.setText("by " + currentBook.getAuthor());
+        titleTextView.setText(currentBook.getTitle());
+        rateTextView.setText("Avg. " + currentBook.getAverageRating());
+        pagesTextView.setText(currentBook.getPageCount() + " pages");
+        if (currentBook.getCategories() == null) {
+            tagsTextView.setText("No Category");
+        }else {
             String[] aux = currentBook.getCategories();
             for(int i = 0;i < aux.length;i++){
-                tags.append(aux[i] + "\n");
+                tagsTextView.append(aux[i] + "\n");
             }
         }
-        description = (TextView)findViewById(R.id.description);
-        description.setText(currentBook.getDescription());
-        fav = (Button)findViewById(R.id.fav);
-        fav.setOnClickListener(new View.OnClickListener() {
+        descriptionTextView.setText(currentBook.getDescription());
+        bookId = myDb.bookExists(currentBook.getId());
+        existsInFavorites = false;
+        if (bookId != -1) {
+            existsInFavorites = myDb.favoriteExists(MainActivity.sUserId, bookId);
+            if (existsInFavorites == true) favoriteBooksButton.setText("Remove from FAVORITES");
+        }
+
+        favoriteBooksButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (myDb.bookExists(MainActivity.email,currentBook.getId()))
-                {
-                    myDb.deleteFavorite(currentBook.getId(),MainActivity.email);
-                    Toast.makeText(BookDetailsActivity.this,"Book removed from favorites",Toast.LENGTH_LONG).show();
-                }else
-                {
-                    boolean isInserted = myDb.insertData(MainActivity.email,currentBook.getId(),currentBook.getTitle(),currentBook.getAuthors(),currentBook.getCategories()[0]);
-                    if (isInserted == true)
-                    {
-                        Toast.makeText(BookDetailsActivity.this,"Book added to favorites",Toast.LENGTH_LONG).show();
-                    }else
-                        Toast.makeText(BookDetailsActivity.this,"ERROR try again",Toast.LENGTH_LONG).show();
+                try {
+                    if (bookId == -1) {
+                        bookId = myDb.insertBook(currentBook.getId(), currentBook.getTitle(), currentBook.getAuthor(), currentBook.getCategories()[0],currentBook.getImgUrl());
+                    }
+                    //in case the book is in favorites list remove it and redirect to favorites books activity
+                    if (myDb.favoriteExists(MainActivity.sUserId, bookId)) {
+                        myDb.deleteFavorite(bookId, MainActivity.sUserId);
+                        Toast.makeText(BookDetailsActivity.this, "Book removed from favorites", Toast.LENGTH_LONG).show();
+                        if (currentBook.getSelfLink() == null) {
+                            Intent intent = new Intent(BookDetailsActivity.this,FavoritesBooksActivity.class);
+                            startActivity(intent);
+                        }
+                    } else {
+                        boolean isInserted = myDb.insertFavorite(MainActivity.sUserId, bookId);
+                        if (isInserted == true) {
+                            Toast.makeText(BookDetailsActivity.this, "Book added to favorites", Toast.LENGTH_LONG).show();
+                        } else
+                            Toast.makeText(BookDetailsActivity.this, "ERROR try again", Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Problem insering ro removind book from favorites", e);
                 }
-
-
             }
         });
 

@@ -139,13 +139,10 @@ public class Helper {
 
                 String title = volumeInfo.getString("title");
 
-                String date = volumeInfo.getString("publishedDate");
-
-                String url = volumeInfo.getString("infoLink");
 
                 String selfLink = currentBook.getString("volumeInfo");
-                Double averageRating = 3.2;
-                int pageCount = 100;
+                Double averageRating = 0.0;
+                int pageCount = 0;
                 String[] categories = null;
                 String description = "";
                 try {
@@ -171,8 +168,7 @@ public class Helper {
                 JSONObject images = volumeInfo.getJSONObject("imageLinks");
                 String imgUrl = images.getString("smallThumbnail");
                 String id = currentBook.getString("id");
-/*public Book(String title, String authors, String imgUrl, Double averageRating, int pageCount, String description, String[] categories, String selfLink, String id) {
-    */
+
                 Book book = new Book(title, author,imgUrl,averageRating,pageCount,description,categories,selfLink,id);
 
                 books.add(book);

@@ -8,17 +8,16 @@ import java.io.Serializable;
 
 public class Book implements Serializable{
 
-    private String title;
-    private String authors;
-    private String imgUrl;
-    private Double averageRating;
-    private int pageCount;
-    private String description;
-    private String[]  categories;
-    private String selfLink;
+    private String mTitle;
+    private String mAuthor;
+    private String mImgUrl;
+    private Double mAverageRating;
+
+    private int mPageCount;
+    private String mDescription;
+    private String[] mCategories;
+    private String mSelfLink;
     private static final long serialVersionUID = 1L;
-
-
 
     public String getId() {
         return id;
@@ -31,95 +30,67 @@ public class Book implements Serializable{
     private String id;
 
     public String getImgUrl() {
-        return imgUrl;
+        return mImgUrl;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
+    public Book(String title, String author, String imgUrl, Double averageRating, int pageCount, String description, String[] categories, String selfLink, String id) {
+        this.mTitle = title;
+        this.mAuthor = author;
+        this.mImgUrl = imgUrl;
+        this.mAverageRating = (averageRating==0)?3.2:averageRating;
 
-    public Book(String title, String authors, String imgUrl, Double averageRating, int pageCount, String description, String[] categories, String selfLink, String id) {
-        this.title = title;
-        this.authors = authors;
-        this.imgUrl = imgUrl;
-        this.averageRating = averageRating;
-        this.pageCount = pageCount;
-        this.description = description;
+        this.mPageCount = pageCount;
+        this.mDescription = description;
         if (categories == null)
         {
-            this.categories = new String[1];
-            this.categories[0] = "NO CATEGORY";
+            this.mCategories = new String[1];
+            this.mCategories[0] = "NO CATEGORY";
         }else
-            this.categories = categories;
+            this.mCategories = categories;
 
-        this.selfLink = selfLink;
+        this.mSelfLink = selfLink;
         this.id = id;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
-    public String getAuthors() {
-        return authors;
-    }
-
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-
-    public void setAuthors(String authors) {
-        this.authors = authors;
+    public String getAuthor() {
+        return mAuthor;
     }
 
     public Double getAverageRating() {
-        return averageRating;
+        return mAverageRating;
     }
 
-    public void setAverageRating(Double averageRating) {
-        this.averageRating = averageRating;
-    }
 
     public int getPageCount() {
-        return pageCount;
+        return mPageCount;
     }
 
-    public void setPageCount(int pageCount) {
-        this.pageCount = pageCount;
-    }
 
     public String getDescription() {
-        return description;
+        return mDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String[] getCategories() {
-        return categories;
+        return mCategories;
     }
 
-    public void setCategories(String[] categories) {
-        this.categories = categories;
-    }
 
     public String getSelfLink() {
-        return selfLink;
+        return mSelfLink;
     }
 
-    public void setSelfLink(String selfLink) {
-        this.selfLink = selfLink;
-    }
 
     @Override
     public String toString() {
         return "Book{" +
-                "title='" + title + '\'' +
-                ", authors='" + authors + '\'' +
-                ", imgUrl='" + imgUrl + '\'' +
+                "mTitle='" + mTitle + '\'' +
+                ", mAuthor='" + mAuthor + '\'' +
+                ", mImgUrl='" + mImgUrl + '\'' +
                 ", id='" + id + '\'' +
                 '}';
     }

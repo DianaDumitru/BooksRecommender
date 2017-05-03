@@ -1,12 +1,12 @@
 package com.example.diana.booksrecommender;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -35,9 +34,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView Prof_Pic;
     private GoogleApiClient googleApiClient;
     private static final int REQ_CODE = 9001;
-    public static String email;
-    private Button show;
+    public static String sEmail;
+    private Button recommenderButton;
     DatabaseHelper myDb;
+    public static int sUserId;
+    private Button favoritesButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,41 +49,67 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SignOut = (Button)findViewById(R.id.bn_logout);
         SignIn = (SignInButton) findViewById(R.id.bn_login);
         Books = (Button) findViewById(R.id.bn_books);
+        Name = (TextView) findViewById(R.id.name);
+        Email = (TextView) findViewById(R.id.email);
+        Prof_Pic = (ImageView) findViewById(R.id.prof_pic);
+        recommenderButton = (Button) findViewById(R.id.bn_rec);
+        favoritesButton = (Button)findViewById(R.id.bn_fav);
+
         Books.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, BooksActivity.class));
             }
         });
-        Name = (TextView) findViewById(R.id.name);
-        Email = (TextView) findViewById(R.id.email);
-        Prof_Pic = (ImageView) findViewById(R.id.prof_pic);
+
         SignIn.setOnClickListener(this);
         SignOut.setOnClickListener(this);
         Prof_Section.setVisibility(View.GONE);
         GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,signInOptions).build();
-        show = (Button) findViewById(R.id.show);
-        show.setOnClickListener(new View.OnClickListener() {
+
+        recommenderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Cursor cursor = myDb.getAllData(email);
-                if (cursor.getCount() == 0)
-                {
-                    ShowMessage("Error","No data found 😞");
-                    return;
-                }
-                StringBuffer buffer = new StringBuffer();
-                while(cursor.moveToNext())
-                {
-                    buffer.append("Id: "+ cursor.getString(0)+"\n");
-                    buffer.append("Email: "+ cursor.getString(1)+"\n");
-                    buffer.append("Tile: "+ cursor.getString(3)+"\n");
-                }
-
-                ShowMessage("Data: ",buffer.toString());
+                Intent intent = new Intent(MainActivity.this,RecommenderActivity.class);
+                startActivity(intent);
             }
         });
+
+        favoritesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,FavoritesBooksActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.commonmenu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id)
+        {
+            case R.id.mnu_home:
+                startActivity(new Intent(this,MainActivity.class));
+                break;
+            case R.id.mnu_search:
+                startActivity(new Intent(this,BooksActivity.class));
+                break;
+            case R.id.mnu_fav:
+                startActivity(new Intent(this,FavoritesBooksActivity.class));
+                break;
+            case R.id.mnu_rec:
+                startActivity(new Intent(this,RecommenderActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void ShowMessage (String title, String message)
@@ -134,10 +162,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             GoogleSignInAccount account = result.getSignInAccount();
             String name = account.getDisplayName();
             String email = account.getEmail();
-            this.email = email;
+            this.sEmail = email;
             String img_url = account.getPhotoUrl().toString();
             Name.setText(name);
             Email.setText(email);
+            this.sUserId = myDb.insertUser(email);
             Glide.with(this).load(img_url).into(Prof_Pic);
             updateUI(true);
         }

@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.ArrayList;
 
 /**
@@ -46,7 +44,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
         bookTitleTextView.setText(currentBookTitle);
 
         // Get the current book author
-        String currentBookAuthor = currentBook.getAuthors();
+        String currentBookAuthor = currentBook.getAuthor();
         // Find the TextView with view book_author
         TextView bookAuthorTextView = (TextView) listItemView.findViewById(R.id.book_author);
 
